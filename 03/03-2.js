@@ -10,29 +10,41 @@ let arr = input.split('\n')
 console.log(arr)
 
 let sum = 0
-for (let row of arr) {
-  console.log(row)
-  let found = {}
-  for (let i = 0; i < row.length / 2; i++) {
-    let char = row[i]
-    found[char] = char
+let found
+for (let i = 0; i < arr.length; i++) {
+  let row = arr[i]
+  if (i % 3 === 0) {
+    found = {}
   }
 
-  for (let i = row.length / 2; i < row.length; i++) {
-    let char = row[i]
-    if (found[char] !== undefined) {
-      if (char.toLowerCase() === char) {
-        sum += lower(char)
-      } else {
-        sum += upper(char)
+  for (let x = 0; x < row.length; x++) {
+    let char = row[x]
+    if (!found[char]) {
+      found[char] = {}
+    }
+    found[char][i % 3] = true
+  }
+  if (i % 3 === 2 ) {
+    console.log(found)
+    for (let c of Object.keys(found)) {
+      let v = found[c]
+      if (v[0] && v[1] && v[2]) {
+        sum += getCharScore(c)
       }
-      break
     }
   }
+  
 }
 
 console.log(sum)
 
+function getCharScore(char) {
+  if (char.toLowerCase() === char) {
+    return lower(char)
+  } else {
+    return upper(char)
+  }
+}
 
 function lower(char) {
   return 1 + char.charCodeAt(0) - 'a'.charCodeAt(0)
