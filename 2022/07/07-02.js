@@ -23,14 +23,12 @@ $ ls
 7214296 k`
 input = getInput()
 
-let arrNames = []
 class Dir {
   name
   dirs = []
   files = []
   constructor(name) {
     this.name = name
-    arrNames.push(name)
   }
 }
 
@@ -43,102 +41,81 @@ class File {
   }
 }
 
-let arr = input.split('\n')
-let dirs = {}
-
-let stack = []
-for (let row of arr) {
-  let values = row.split(' ')
-  const currentDir = stack[stack.length - 1]
-  if (values[0] === '$') {
-    // commands
-    if (values[1] === 'cd') {
-      // navigate
-      if (values[2] === '..') {
-        console.log('cd ..:', row)
-        stack.pop()
-      } else {
-        console.log('cd dir:', row)
-        let dirName = values[2]
-        const found = currentDir?.dirs.find(d => d.name === dirName)
-        stack.push(found ? found : new Dir(values[2]))
-      }
-    } else if (values[1] === 'ls') {
-      // ls
-      console.log('ls:', row)
+main()
+function main() {
+  let arr = input.split('\n')
+  let fileTree = getFileTree(arr)
+  let sums = getSums(fileTree)
+  sums.sort((a, b) => b - a)
+  let rootDirSize = sums[0]
+  sums = sums.reverse()
+  let freeSpaceNeeded = 30_000_000 - (70_000_000 - rootDirSize)
+  let answer
+  for (let size of sums) {
+    if (size >= freeSpaceNeeded) {
+      answer = size
+      break
     }
-  } else if (values[0] === 'dir') {
-    // dir
-    console.log('dir:', row)
-    let dirName = values[1]
-    currentDir.dirs.push(new Dir(dirName))
-
-  } else {
-    // file
-    console.log('file:', row)
-    let fileSize = values[0]
-    let fileName = values[1]
-    currentDir.files.push(new File(fileName, fileSize))
+  }
+  if (answer === 7991939) {
+    console.log(answer)
+    console.log('correct')
   }
 }
 
-
-let fileTree = stack[0]
-// console.log(JSON.stringify(fileTree, null, 2))
-
-
-let ss = 0
-let sums = []
-function traverseDir(dir) {
-  let sum = 0
-  for (let d of dir.dirs) {
-    sum += traverseDir(d)
+function getSums(rootDir) {
+  let sums = []
+  function traverseDirs(dir) {
+    let sum = 0
+    for (let d of dir.dirs) {
+      sum += traverseDirs(d)
+    }
+    for (let f of dir.files) {
+      let x = Number(f.size)
+      sum += x
+    }
+    sums.push(sum)
+    return sum
   }
-  for (let f of dir.files) {
-    let x = Number(f.size)
-    sum += x
-  }
-  if (sum <= 100000) {
-    ss += sum
-  }
-  sums.push(sum)
-  return sum
-}
-console.log('----------')
-let s = traverseDir(fileTree)
-console.log(ss)
-console.log(s)
-
-sums = sums.sort((a, b) => a - b)
-let freeSpaceNeeded = 30_000_000 - (70_000_000 - s)
-console.log(sums)
-console.log(freeSpaceNeeded)
-for (let size of sums ) {
-  if (size >= freeSpaceNeeded)  {
-    console.log('size is:', size)
-    break
-  }
+  traverseDirs(rootDir)
+  return sums
 }
 
-// traverseFileTree(fileTree)
+function getFileTree(arr) {
+  let stack = []
+  for (let row of arr) {
+    let vv = row.split(' ')
+    const currentDir = stack[stack.length - 1]
+    if (vv[0] === '$') {
+      cd(vv, currentDir, stack)
+    } else if (vv[0] === 'dir') {
+      dir(vv, currentDir)
+    } else {
+      file(vv, currentDir)
+    }
+  }
+  return stack[0]
+}
+function file(vv, currentDir, stack) {
+  let fileSize = vv[0]
+  let fileName = vv[1]
+  currentDir.files.push(new File(fileName, fileSize))
+}
 
-// function traverseFileTree(tree) {
-//   let dirStack = [tree]
-//   while(dirStack.length) {
-//     let last = dirStack[dirStack.length - 1]
-//     if (last.dirs.length > 0) {
-//       for (let d of last.dirs) {
-//         dirStack.push(d)
-//       }
-//     } else {
-//       for (let f of last.files) {
-//         debugger
-//         console.log(f, dirStack)
-//       }
-//       dirStack.pop()
-//     }
-//   }
-// }
+function dir(vv, currentDir) {
+  let dirName = vv[1]
+  currentDir.dirs.push(new Dir(dirName))
+}
+
+function cd(vv, currentDir, stack) {
+  if (vv[1] === 'cd' && vv[2] === '..') {
+    stack.pop()
+  } else if (vv[1] === 'cd') {
+    let dirName = vv[2]
+    const found = currentDir?.dirs.find(d => d.name === dirName)
+    stack.push(found ? found : new Dir(vv[2]))
+  }
+}
 
 function getInput() {
   return `$ cd /
