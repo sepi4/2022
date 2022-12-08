@@ -88,6 +88,7 @@ let fileTree = stack[0]
 
 
 let ss = 0
+let sums = []
 function traverseDir(dir) {
   let sum = 0
   for (let d of dir.dirs) {
@@ -100,11 +101,24 @@ function traverseDir(dir) {
   if (sum <= 100000) {
     ss += sum
   }
+  sums.push(sum)
   return sum
 }
 console.log('----------')
 let s = traverseDir(fileTree)
 console.log(ss)
+console.log(s)
+
+sums = sums.sort((a, b) => a - b)
+let freeSpaceNeeded = 30_000_000 - (70_000_000 - s)
+console.log(sums)
+console.log(freeSpaceNeeded)
+for (let size of sums ) {
+  if (size >= freeSpaceNeeded)  {
+    console.log('size is:', size)
+    break
+  }
+}
 
 // traverseFileTree(fileTree)
 
