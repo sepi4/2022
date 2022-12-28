@@ -1,3 +1,4 @@
+export {}
 let input: string = getInput()
 type Addx = {
   action: 'addx',

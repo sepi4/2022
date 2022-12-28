@@ -1,3 +1,4 @@
+export {}
 let input: string = getInput()
 // let input: string = getExampleInput()
 type Addx = {
