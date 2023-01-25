@@ -10,22 +10,22 @@
 
 <body>
   <input type="text" name="" id="myInput">
-
   <h1 id="char" style="border: 1px black solid;"></h1>
 
   <script>
     let input = document.querySelector('#myInput')
     let char = document.querySelector('#char')
     let pre
+    let chars = '{[]}()=?+\&%$#@!*\'":;,.-_><|^~`\\\/';
     const newChar = () => {
-      let chars = '{[]}()=?+\&%$#@!*\'":;,.-_><|^~`\\\/';
       let i = Math.floor(Math.random() * chars.length);
       char.textContent = chars[i];
       pre = chars[i];
     }
     const testChar = (e) => {
-      if (e !== undefined) {
-        let v = e?.target.value;
+      if (chars.indexOf(e.key) > -1) {
+        console.log(e.key);
+        let v = e.key;
         v = v.substring(v.length - 1);
         if (v?.length && v === pre) {
           e.target.style = 'background: white;'
@@ -38,9 +38,11 @@
         }
       }
     }
-    input.addEventListener('input', testChar);
+
+    input.addEventListener('keydown', testChar);
     input.focus();
     newChar();
+
   </script>
 
 </body>
