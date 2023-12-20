@@ -1,7 +1,23 @@
-﻿Part1();
-// Part2();
+﻿// Part1();
+Part2();
 
 // FUNCTIONS  -------------------------------------------------------------------
+void Part2()
+{
+    // const string path = "/Users/serpo/tutorials/advent-of-code/2023/c#/09/example.txt";
+    const string path = "/Users/serpo/tutorials/advent-of-code/2023/c#/09/input.txt";
+    var input = ReadInput(path);
+    var lists = ParseInput(input);
+
+    var prevValues = new List<int>();
+    foreach (var list in lists)
+    {
+        prevValues.Add(CalculatePreviousValue(list));
+    }
+    var result = prevValues.Sum();
+    Console.WriteLine(result);
+}
+
 void Part1()
 {
     // const string path = "/Users/serpo/tutorials/advent-of-code/2023/c#/09/example.txt";
@@ -16,6 +32,30 @@ void Part1()
     }
     var result = nextValues.Sum();
     Console.WriteLine(result);
+}
+
+int CalculatePreviousValue(List<int> list)
+{
+    var helperLists = MakeHelperLists(list);
+    // loop through helper lists first elements
+    for (int i = helperLists.Count - 1; i >= 0; i--)
+    {
+        var currentList = helperLists[i];
+        if (i + 1 < helperLists.Count)
+        {
+            // append (first + prev(first)) to first of current list
+            var prevList = helperLists[i + 1];
+            var currentFirst = currentList.First();
+            var prevFirst = prevList.First();
+            currentList.Insert(0, currentFirst - prevFirst);
+        }
+        else
+        {
+            currentList.Insert(0, 0);
+        }
+    }
+
+    return helperLists[0].First();
 }
 
 int CalculateNextValue(List<int> list)
@@ -74,10 +114,6 @@ List<List<int>> ParseInput(string[] input)
         row => row.Split(" ").Select(int.Parse).ToList()
     ).ToList();
     return lists;
-}
-
-void Part2()
-{
 }
 
 string[] ReadInput(string path)
