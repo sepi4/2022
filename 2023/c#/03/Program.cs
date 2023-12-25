@@ -9,7 +9,7 @@ Part2();
 
 void Part2()
 {
-  var rawInput = ReadInput("input.txt");
+  var rawInput = ReadInput("/Users/serpo/tutorials/advent-of-code/2023/c#/03/input.txt");
   // var rawInput = ReadInput("example.txt");
   var matrix = rawInput
     .Select(x => x.Select(y => y.ToString()).ToArray())

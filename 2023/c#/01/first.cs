@@ -77,7 +77,7 @@ int getNum(string str)
   }
 }
 
-string input = File.ReadAllText("./input.txt");
+string input = File.ReadAllText("/Users/serpo/tutorials/advent-of-code/2023/c#/01/input.txt");
 // string input = File.ReadAllText("./input2.txt");
 // string input = "82sixtwonez";
 

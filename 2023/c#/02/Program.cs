@@ -91,7 +91,7 @@ void Part2()
 
 string[] ReadInput()
 {
-  string input = File.ReadAllText("./input.txt");
+  string input = File.ReadAllText("/Users/serpo/tutorials/advent-of-code/2023/c#/02/input.txt");
   // string input = File.ReadAllText("./example.txt");
   var rows = input.Split("\n");
   return rows;
