@@ -4,13 +4,76 @@ public class Program
 {
   public static void Main(string[] args)
   {
-    var file = "example.txt";
+    var file = "input.txt";
+    // var file = "example.txt";
     var path = $"/Users/serpo/tutorials/advent-of-code/2023/c#/11/{file}";
     var input = AdventCode.ReadInput(path);
-    Console.WriteLine(CalculateDistanceSum(input));
+    
+    // // part 1
+    // Console.WriteLine(CalculateDistanceSum1(input));
+    
+    // part 2
+    Console.WriteLine(CalculateDistanceSum2(input, 1000_000));
   }
 
-  public static int CalculateDistanceSum(string[] input)
+  public static long CalculateDistanceSum2(string[] space, int expansion)
+  {
+    var galaxies = GetGalaxies(space);
+    var list = space.Select(s => s.ToList()).ToList();
+    var (emptyRowIndexes, emptyColumnIndexes) = GetEmptyIndexes(list);
+    foreach (var g in galaxies)
+    {
+      var amount = emptyColumnIndexes.Count(index => index < g.X);
+      g.X += amount * (expansion - 1);
+    }
+    foreach (var g in galaxies)
+    {
+      var amount = emptyRowIndexes.Count(index => index < g.Y);
+      g.Y += amount * (expansion - 1);
+    }
+    
+    var pairs = new List<(Galaxy, Galaxy)>();
+    for (var i = 0; i < galaxies.Count - 1; i++)
+    {
+      for (var j = i + 1; j < galaxies.Count; j++)
+      {
+        pairs.Add((galaxies[i], galaxies[j]));
+      }
+    }
+
+    long distSum = 0;
+    foreach (var p in pairs)
+    {
+      var (a, b) = p;
+      distSum += GetDist(a, b);
+    }
+    return distSum;
+  }
+  
+  public static void PrintSpace(List<Galaxy> galaxies)
+  {
+    var maxX = galaxies.Max(g => g.X);
+    var maxY = galaxies.Max(g => g.Y);
+    for (var i = 0; i <= maxY; i++)
+    {
+      var row = "";
+      for (var j = 0; j <= maxX; j++)
+      {
+        var galaxy = galaxies.FirstOrDefault(g => g.Y == i && g.X == j);
+        if (galaxy != null)
+        {
+          row += "#";
+        }
+        else
+        {
+          row += ".";
+        }
+      }
+      Console.WriteLine(row);
+    }
+  }
+
+  public static int CalculateDistanceSum1(string[] input)
   {
     var expandedSpace = ExpandSpace(input);
     var galaxies = GetGalaxies(expandedSpace);

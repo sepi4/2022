@@ -88,7 +88,7 @@ public class UnitTest1
     }
 
     [Fact]
-    public void Test_CalculateDistanceSum()
+    public void Test_CalculateDistanceSum1()
     {
         
         var ss = new string[]
@@ -104,7 +104,28 @@ public class UnitTest1
             ".......#..",
             "#...#.....",
         };
-        Assert.Equal(374, Program.CalculateDistanceSum(ss));
+        Assert.Equal(374, Program.CalculateDistanceSum1(ss));
+    }
+    
+    
+    [Fact]
+    public void Test_CalculateDistanceSum2()
+    {
+        var ss = new string[]
+        {
+            "...#......",
+            ".......#..",
+            "#.........",
+            "..........",
+            "......#...",
+            ".#........",
+            ".........#",
+            "..........",
+            ".......#..",
+            "#...#.....",
+        };
+        Assert.Equal(1030, Program.CalculateDistanceSum2(ss, 10));
+        Assert.Equal(8040, Program.CalculateDistanceSum2(ss, 100));
     }
 
     [Fact]
