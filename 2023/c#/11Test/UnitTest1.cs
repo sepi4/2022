@@ -90,7 +90,7 @@ public class UnitTest1
     [Fact]
     public void Test_CalculateDistanceSum1()
     {
-        
+
         var ss = new string[]
         {
             "...#......",
@@ -106,8 +106,8 @@ public class UnitTest1
         };
         Assert.Equal(374, Program.CalculateDistanceSum1(ss));
     }
-    
-    
+
+
     [Fact]
     public void Test_CalculateDistanceSum2()
     {
