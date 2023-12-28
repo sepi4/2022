@@ -5,6 +5,6 @@ public class AdventCode
     public static string[] ReadInput(string path)
     {
         var input = File.ReadAllText(path);
-        return input.Split("\n");
+        return input.Split(Environment.NewLine);
     }
 }
