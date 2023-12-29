@@ -110,4 +110,75 @@ public class UnitTest1
 #....#..#";
         Assert.Equal(405, Program.Part1(input.Split(Environment.NewLine)));
     }
+
+    [Fact]
+    public void Test_Part2()
+    {
+        const string input = @"#.##..##.
+..#.##.#.
+##......#
+##......#
+..#.##.#.
+..##..##.
+#.#.##.#.
+
+#...##..#
+#....#..#
+..##..###
+#####.##.
+#####.##.
+..##..###
+#....#..#";
+        Assert.Equal(400, Program.Part2(input.Split(Environment.NewLine)));
+    }
+
+    [Fact]
+    public void Test_GetNoteOptions()
+    {
+        var note = new[]
+        {
+            "##",
+            "..",
+        };
+
+        string[][] options =
+        [
+            [
+                ".#",
+                "..",
+            ],
+            [
+                "#.",
+                "..",
+            ],
+            [
+                "##",
+                "#.",
+            ],
+            [
+                "##",
+                ".#",
+            ],
+        ];
+
+        Assert.Equal(options, Program.GetNoteOptions(note));
+    }
+
+    [Fact]
+    public void Test_FindReflections()
+    {
+        const string input = @"#...##..#
+#....#..#
+..##..###
+#####.##.
+#####.##.
+..##..###
+#....#..#";
+
+        var note = input.Split('\n');
+        var list = Program.FindReflection(note);
+        var arr = list.ToArray();
+
+        Assert.Equal([((3, 4), Direction.Vertical)], arr);
+    }
 }
