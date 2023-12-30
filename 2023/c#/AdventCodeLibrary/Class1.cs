@@ -7,4 +7,12 @@ public class AdventCode
         var input = File.ReadAllText(path);
         return input.Split(Environment.NewLine);
     }
+    
+    public static void PrintInput(string[] input)
+    {
+        foreach (var line in input)
+        {
+            Console.WriteLine(line);
+        }
+    }
 }
