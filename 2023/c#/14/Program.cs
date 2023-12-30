@@ -11,12 +11,137 @@ public static class Program
         var path = $"/Users/serpo/tutorials/advent-of-code/2023/c#/14/{file}";
         var input = AdventCode.ReadInput(path);
 
-        // // part 1
-        var total = Part1(input);
-        Console.WriteLine(total);
+        // // // part 1
+        // var total = Part1(input);
+        // Console.WriteLine(total);
 
         // part 2
-        // Part2(input);
+        var total = Part2(input);
+        Console.WriteLine(total);
+    }
+
+    public static int Part2(string[] input)
+    {
+        // You cannot loop the billion time. 
+        // But this sequence is repeating, so you can find when it starts to repeat and how long is the cycle
+        // Then you can calculate what billion index would be
+
+        var dirs = new List<Direction> { Direction.North, Direction.West, Direction.South, Direction.East };
+        var i = 0;
+        var all = new List<string>();
+        var afterCyclePositions = input.Select(s => s).ToArray();
+
+        var maxIndex = 1000_000_000 - 1;
+        while (i < maxIndex)
+        {
+            foreach (var dir in dirs)
+            {
+                afterCyclePositions = MoveRocks(afterCyclePositions, dir);
+            }
+
+            // var for searching repetition
+            var joinedAfterCyclePositions = string.Join("\n", afterCyclePositions);
+            var startIndex = all.IndexOf(joinedAfterCyclePositions);
+            if (startIndex != -1)
+            {
+                var cycleLength = i - startIndex;
+                var remaining = maxIndex - i;
+                var mod = remaining % cycleLength;
+                afterCyclePositions = all[startIndex + mod].Split("\n");
+                break;
+            }
+            all.Add(joinedAfterCyclePositions);
+            i++;
+        }
+        // Console.WriteLine(string.Join("\n", after));
+
+        var totalLoad = GetRocksTotalLoad(afterCyclePositions);
+        return totalLoad;
+    }
+
+    public static string[] MoveRocks(string[] input, Direction dir)
+    {
+        var matrix = input.Select(row => row.ToCharArray()).ToArray();
+
+        var dy = 0;
+        var dx = 0;
+        var sy = 0;
+        var sx = 0;
+
+        switch (dir)
+        {
+            case Direction.North:
+                dy = -1;
+                sy = 0;
+                for (var y = sy; y < matrix.Length && y >= 0; y++)
+                {
+                    for (var x = sx; x < matrix[y].Length && x >= 0; x++)
+                    {
+                        Move(matrix, y, x, dy, dx);
+                    }
+                }
+
+                break;
+            case Direction.South:
+                dy = 1;
+                sy = input.Length - 1;
+                for (var y = sy; y < matrix.Length && y >= 0; y--)
+                {
+                    for (var x = sx; x < matrix[y].Length && x >= 0; x++)
+                    {
+                        Move(matrix, y, x, dy, dx);
+                    }
+                }
+
+                break;
+            case Direction.East:
+                dx = 1;
+                sx = input[0].Length - 1;
+                for (var x = sx; x < matrix[0].Length && x >= 0; x--)
+                {
+                    for (var y = sy; y < matrix.Length && y >= 0; y++)
+                    {
+                        Move(matrix, y, x, dy, dx);
+                    }
+                }
+
+                break;
+            case Direction.West:
+                dx = -1;
+                sx = 0;
+                for (var x = sx; x < matrix[0].Length && x >= 0; x++)
+                {
+                    for (var y = sy; y < matrix.Length && y >= 0; y++)
+                    {
+                        Move(matrix, y, x, dy, dx);
+                    }
+                }
+
+                break;
+            default:
+                throw new Exception("Unknown direction");
+        }
+
+        return matrix.Select(row => new string(row)).ToArray();
+    }
+
+    public static void Move(char[][] matrix, int y, int x, int dy, int dx)
+    {
+        if (matrix[y][x] != 'O') return;
+
+        while (
+            y + dy >= 0 &&
+            y + dy < matrix.Length &&
+            x + dx >= 0 &&
+            x + dx < matrix[0].Length &&
+            matrix[y + dy][x + dx] == '.')
+        {
+            matrix[y][x] = '.';
+            matrix[y + dy][x + dx] = 'O';
+
+            y += dy;
+            x += dx;
+        }
     }
 
     public static int Part1(string[] input)
@@ -40,9 +165,9 @@ public static class Program
                 }
             }
         }
+
         return result;
     }
-    
 
     public static string[] MoveRocksNorth(string[] input)
     {
@@ -54,6 +179,7 @@ public static class Program
                 MoveUp(matrix, y, x);
             }
         }
+
         return matrix.Select(row => new string(row)).ToArray();
     }
 
@@ -69,4 +195,12 @@ public static class Program
             y--;
         }
     }
+}
+
+public enum Direction
+{
+    North,
+    South,
+    East,
+    West
 }

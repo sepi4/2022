@@ -88,4 +88,142 @@ public class UnitTest1
         };
         Assert.Equal(136, Program.Part1(input));
     }
+
+    [Fact]
+    public void Test_Move()
+    {
+        var input = new[]
+        {
+            "..#",
+            ".O.",
+            "..#",
+        }.Select(row => row.ToCharArray()).ToArray();
+        var expected = new[]
+        {
+            "..#",
+            "O..",
+            "..#",
+        }.Select(row => row.ToCharArray()).ToArray();
+
+        Program.Move(input, 1, 1, 0, -1);
+        Assert.Equal(expected, input);
+
+        // ---
+        expected = new[]
+        {
+            "O.#",
+            "...",
+            "..#",
+        }.Select(row => row.ToCharArray()).ToArray();
+        Program.Move(input, 1, 0, -1, 0);
+        Assert.Equal(expected, input);
+
+        // ---
+        expected = new[]
+        {
+            ".O#",
+            "...",
+            "..#",
+        }.Select(row => row.ToCharArray()).ToArray();
+        Program.Move(input, 0, 0, 0, 1);
+        Assert.Equal(expected, input);
+    }
+
+    [Fact]
+    public void Test_MoveRocks()
+    {
+        var input = new[]
+        {
+            "O....#....",
+            "O.OO#....#",
+            ".....##...",
+            "OO.#O....O",
+            ".O.....O#.",
+            "O.#..O.#.#",
+            "..O..#O..O",
+            ".......O..",
+            "#....###..",
+            "#OO..#....",
+        };
+
+
+        // cycle 1
+        input = Program.MoveRocks(input, Direction.North);
+        input = Program.MoveRocks(input, Direction.West);
+        input = Program.MoveRocks(input, Direction.South);
+        input = Program.MoveRocks(input, Direction.East);
+        var expected = new[]
+        {
+            ".....#....",
+            "....#...O#",
+            "...OO##...",
+            ".OO#......",
+            ".....OOO#.",
+            ".O#...O#.#",
+            "....O#....",
+            "......OOOO",
+            "#...O###..",
+            "#..OO#....",
+        };
+        Assert.Equal(expected, input);
+
+        // cycle 2
+        input = Program.MoveRocks(input, Direction.North);
+        input = Program.MoveRocks(input, Direction.West);
+        input = Program.MoveRocks(input, Direction.South);
+        input = Program.MoveRocks(input, Direction.East);
+        expected = new[]
+        {
+            ".....#....",
+            "....#...O#",
+            ".....##...",
+            "..O#......",
+            ".....OOO#.",
+            ".O#...O#.#",
+            "....O#...O",
+            ".......OOO",
+            "#..OO###..",
+            "#.OOO#...O",
+        };
+        Assert.Equal(expected, input);
+
+        // cycle 3
+        input = Program.MoveRocks(input, Direction.North);
+        input = Program.MoveRocks(input, Direction.West);
+        input = Program.MoveRocks(input, Direction.South);
+        input = Program.MoveRocks(input, Direction.East);
+        expected = new[]
+        {
+            ".....#....",
+            "....#...O#",
+            ".....##...",
+            "..O#......",
+            ".....OOO#.",
+            ".O#...O#.#",
+            "....O#...O",
+            ".......OOO",
+            "#...O###.O",
+            "#.OOO#...O",
+        };
+        Assert.Equal(expected, input);
+    }
+    
+    [Fact]
+    public void Test_Part2()
+    {
+        var input = new[]
+        {
+            "O....#....",
+            "O.OO#....#",
+            ".....##...",
+            "OO.#O....O",
+            ".O.....O#.",
+            "O.#..O.#.#",
+            "..O..#O..O",
+            ".......O..",
+            "#....###..",
+            "#OO..#....",
+        };
+        Assert.Equal(64, Program.Part2(input));
+    }
 }
