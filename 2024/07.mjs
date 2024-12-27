@@ -46,6 +46,8 @@ function calculate(values, ops) {
       result *= values[i]
     } else if (op === '+') {
       result += values[i]
+    } else if (op === '|') {
+      result = Number(`${result}${values[i]}`)
     } else {
       throw Error('error in operation')
     }
@@ -54,7 +56,7 @@ function calculate(values, ops) {
 }
 
 function getPossibleOperations(len) {
-  let ops = ['*', '+']
+  let ops = ['*', '+', '|']
   let allOps = []
   for (let i = 0; i < len; i++) {
     if (allOps.length === 0) {
