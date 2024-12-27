@@ -4,32 +4,50 @@ class GuardWalking {
   matrix = null
   dir = { dy: -1, dx: 0 } // up
   position = null
+  visited = {}
 
   constructor(input) {
     this.matrix = input.split('\n').map(row => row.split(''))
     this.position = this.getStartingPosition()
-    this.walk()
   }
 
   markPosition() {
     this.matrix[this.position.y][this.position.x] = 'X'
   }
 
-  walk() {
+  checkIfVisited() {
+    let key = this.getVisitedKey()
+    if (this.visited[key]) {
+      return true
+    }
+    this.visited[key] = true
+    return false
+  }
+
+  getVisitedKey() {
+    let { dy, dx } = this.dir
+    let { y, x } = this.position
+    let key = `dy:${dy},dx:${dx}|y:${y},x:${x}`
+    return key
+  }
+
+  isSteppingOutOfMatrix() {
     this.markPosition() // starting position
     while (this.position) {
-      if (this.getNextStepChar() === '#' && this.getNextStepChar() === 'O') {
+      if (this.checkIfVisited()) {
+        return false
+      }
+      if (!this.nextStepInMatrix()) {
+        break
+      }
+      if (this.getNextStepChar() === '#' || this.getNextStepChar() === 'O') {
         this.turn()
       } else {
-        try {
-          this.stepForward()
-          this.markPosition()
-        } catch (error) {
-          break
-        }
+        this.stepForward()
+        this.markPosition()
       }
     }
-    console.log(this.countMarked())
+    return true
   }
 
   countMarked() {
@@ -45,7 +63,6 @@ class GuardWalking {
   }
 
   stepForward() {
-    console.log(this.position)
     this.position.y += this.dir.dy
     this.position.x += this.dir.dx
   }
@@ -62,19 +79,23 @@ class GuardWalking {
     return null
   }
 
-  getNextStepChar() {
-    // console.log(this.)
-    let y = this.position.y
-    let x = this.position.x
+  nextStepInMatrix() {
+    let { y, x } = this.position
     if (
       y + this.dir.dy < 0 ||
       y + this.dir.dy >= this.matrix.length ||
       x + this.dir.dx < 0 ||
       x + this.dir.dx >= this.matrix[0].length
     ) {
-      return null
+      return false
     }
-    let char = this.matrix[y + this.dir.dy][x + this.dir.dx]
+    return true
+  }
+
+  getNextStepChar() {
+    let { y, x } = this.position
+    let { dy, dx } = this.dir
+    let char = this.matrix[y + dy][x + dx]
     return char
   }
 
@@ -111,8 +132,29 @@ async function main() {
 ........#.
 #.........
 ......#...`
-  // input = await readInput('06-input.txt')
-  const gw = new GuardWalking(input)
+  input = await readInput('06-input.txt')
+
+
+  const obj = new GuardWalking(input)
+  let yLen = obj.matrix.length
+  let xLen = obj.matrix[0].length
+
+
+  let sum = 0
+  for (let y = 0; y < yLen; y++) {
+    for (let x = 0; x < xLen; x++) {
+      const gw = new GuardWalking(input)
+      let char = gw.matrix[y][x]
+      if (char === '.') {
+        gw.matrix[y][x] = 'O'
+        let result = gw.isSteppingOutOfMatrix()
+        if (!result) {
+          sum++
+        }
+      }
+    }
+  }
+  console.log(sum)
 
 }
 main()
