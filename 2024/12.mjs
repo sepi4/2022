@@ -12,7 +12,24 @@ VVIIICJJEE
 MIIIIIJJEE
 MIIISIJEEE
 MMMISSJEEE`
-//   input = await readInput('12-input.txt')
+
+    input = await readInput('12-input.txt')
+
+    //     input = `
+    // EEEEE
+    // EXXXX
+    // EEEEE
+    // EXXXX
+    // EEEEE
+    // `
+
+    //     input = `
+    // AAAAAA
+    // AAABBA
+    // AAABBA
+    // ABBAAA
+    // ABBAAA
+    // AAAAAA`
 
     let dirs = [
         { dy: -1, dx: 0 },
@@ -23,13 +40,14 @@ MMMISSJEEE`
 
     let matrix = input
         .split('\n')
+        .map(r => r.trim())
         .filter(row => row.length)
         .map(row => row.split(''))
 
 
-    function countCellFences(y, x) {
+    function getDifferentNeigbors(y, x) {
         let value = matrix[y][x]
-        let count = 0
+        let arr = []
         for (let dir of dirs) {
             let { dy, dx } = dir
             let v = matrix[y + dy]?.[x + dx]
@@ -37,10 +55,10 @@ MMMISSJEEE`
                 v === undefined // matrix side
                 || v !== value // different neighbor
             ) {
-                count++
+                arr.push({ dy, dx, })
             }
         }
-        return count
+        return arr
     }
 
     function getSameValueNeighbors(y, x) {
@@ -63,15 +81,12 @@ MMMISSJEEE`
     let cells = []
 
     // GET FENCES
+
     for (let y = 0; y < matrix.length; y++) {
         let arr = []
         for (let x = 0; x < matrix[0].length; x++) {
-            let n = countCellFences(y, x)
-            arr.push({
-                y,
-                x,
-                fences: n,
-            })
+            let differentNeigbors = getDifferentNeigbors(y, x)
+            arr.push({ y, x, differentNeigbors, })
         }
         cells.push(arr)
     }
@@ -107,7 +122,7 @@ MMMISSJEEE`
     }
 
     // group by area id
-    let grouped = cells.flatMap(row => row).reduce((acc, cur) => {
+    let grouped = cells.flat().reduce((acc, cur) => {
         if (acc.has(cur.areaId)) {
             acc.get(cur.areaId).push(cur)
         } else {
@@ -117,42 +132,49 @@ MMMISSJEEE`
     }, new Map())
 
     let price = 0
-
     for (let values of grouped.values()) {
+        let marked = []
         let fences = 0
-        for (let v of values) {
-            fences += v.fences
+        for (let item of values) {
+            let neighbors = getNeigbors(marked, item)
+            for (let d of item.differentNeigbors) {
+                let { dy, dx } = d
+                if (neighbors.length) {
+                    let foundSameFence = neighbors
+                        .find(n => n.differentNeigbors
+                            .find(nd => nd.dy === dy && nd.dx === dx))
+                    if (foundSameFence) {
+                        continue
+                    }
+                }
+                fences++
+            }
+            marked.push(item)
         }
         price += values.length * fences
     }
+
+
     // console.log(grouped)
     console.log(price)
 
+}
 
 
-
-    print(cells)
-
-
-
-
+function getNeigbors(arr, obj) {
+    return arr.filter(item => (
+        ((item.y - obj.y === 1 || item.y - obj.y === -1) && item.x === obj.x)
+        || ((item.x - obj.x === 1 || item.x - obj.x === -1) && item.y === obj.y)
+    ))
 }
 
 main()
 
-function print(arr) {
-    let str = ''
-    for (let row of arr) {
-        for (let el of row) {
-            str += el.fences
-        }
-        str += '\n'
-    }
-    console.log(str)
-}
-
 
 /*
+
+PIPI CODE
+---------
 
     xxx 
     xxx  
@@ -161,9 +183,8 @@ function print(arr) {
      x  
      xxxxx  . .
      xx         .
-    x x          .
+    x x          .     
    x   x         .
 xxxxxxxxxxx     _____
-
 
 */
