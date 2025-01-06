@@ -21,10 +21,17 @@ Prize: X=7870, Y=6450
 Button A: X+69, Y+23
 Button B: X+27, Y+71
 Prize: X=18641, Y=10279`
-
   input = await readInput('13-input.txt')
 
-  let nums = getNums(input)
+
+
+
+  // let nums = getNums(input)
+  let nums = getNums(input).map(v => ({
+    ...v,
+    R: v.R + 10000000000000,
+    K: v.K + 10000000000000,
+  }))
   let sum = 0
   for (let v of nums) {
     // console.log(v)
